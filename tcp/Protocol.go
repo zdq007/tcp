@@ -23,5 +23,6 @@ func (self * DefaulJsonProtocolGenerator) New(object interface{})(protocol Proto
 //协议接口,协议负责拆包和封包
 type Protocol interface {
 	read() error
+	write([]byte,...interface{})(int,error)
 	splitPackage([]byte) error
 }

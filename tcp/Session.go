@@ -40,7 +40,13 @@ func NewSession(protocolGenerator ProtocolGenerator, conn *net.TCPConn) *Session
 	session.protocol = protocolGenerator.New(session)
 	return session
 }
-
+/**
+ *@mark+  获取会话对应的协议
+ *@return 协议接口对象，上层转换成相应协议对象
+ */
+func (self *Session) Proto() Protocol{
+	return self.protocol
+}
 /**
  *@mark+  绑定数据事件
  *@param  OnData 数据回调函数，通过参数data []byte 将数据返回给用户
@@ -160,20 +166,27 @@ func (self *Session) readLoop() error{
 	return self.protocol.read()
 }
 /**
- *@mark+ 同步发送
+ *@mark+ 同步发送,调用底层连接直接发送，数据包要求已经实现了协议
  */
 func (self *Session) Write(data []byte) (n int, err error){
 	return self.conn.Write(data)
 }
 /**
- *@mark+ 同步发送
+ *@mark+ 同步发送，调用封装协议发送，自动包装协议
  */
-func (self *Session) Send(data []byte) (n int, err error){
-	return self.conn.Write(data)
+func (self *Session) Send(data []byte,params ...interface{}) (n int, err error){
+	return self.protocol.write(data,params...)
 }
 
 /**
- *@mark+ 异步发送，交由一个发送协程来处理
+ *@mark+ 异步发送，交由一个发送协程来处理,调用底层连接直接发送，数据包要求已经实现了协议
+ */
+func (self *Session) AsynWrite(data []byte) {
+
+}
+
+/**
+ *@mark+ 异步发送，交由一个发送协程来处理，调用封装协议发送，自动包装协议
  */
 func (self *Session) AsynSend(data []byte) {
 

@@ -89,3 +89,7 @@ func (self *ProtoJson) splitPackage(buf []byte)(err error){
 	}
 	return
 }
+
+func (self *ProtoJson) write(data []byte,params ...interface{})(int,error){
+	return self.session.conn.Write(append(data,13,10))	
+}

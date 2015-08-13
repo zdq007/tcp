@@ -115,7 +115,9 @@ func (self *ProtoByte) splitPackage(readbuf []byte) error{
 	}
 	return nil
 }
-
+func (self *ProtoByte) write(data []byte,params ...interface{})(int,error){
+	return self.session.conn.Write(warpData(params[0].(byte),data))	
+}
 func NewPacketHead2(ver, msgtype byte, datalen uint16, targetid uint64) (ph *PacketHead) {
 	ph = new(PacketHead)
 	ph.Version = ver
@@ -142,7 +144,7 @@ func (self *PacketHead) ToString() {
 	fmt.Println("版本号：", self.Version, "消息类型：", self.Msgtype, "包长度：", self.Datalen, "目标ID：", self.Targetid)
 }
 
-func WarpData(msgtype byte, data []byte) []byte {
+func warpData(msgtype byte, data []byte) []byte {
 	dl := 0
 	if data != nil {
 		dl = len(data)
